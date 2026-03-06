@@ -1,0 +1,227 @@
+// 通用样式
+
+// 主题色
+$primary-color: #409EFF;
+$success-color: #67C23A;
+$warning-color: #E6A23C;
+$danger-color: #F56C6C;
+$info-color: #909399;
+
+// 文字颜色
+$text-primary: #303133;
+$text-regular: #606266;
+$text-secondary: #909399;
+$text-placeholder: #C0C4CC;
+
+// 边框颜色
+$border-base: #DCDFE6;
+$border-light: #E4E7ED;
+$border-lighter: #EBEEF5;
+$border-extra-light: #F2F6FC;
+
+// 页面容器
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+// 卡片样式
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+// 商品卡片
+.product-card {
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.15);
+  }
+  
+  .product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  .product-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: $text-primary;
+    margin: 12px 0 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .product-price {
+    color: $danger-color;
+    font-size: 18px;
+    font-weight: bold;
+    
+    &::before {
+      content: '¥';
+      font-size: 14px;
+    }
+  }
+  
+  .product-sold {
+    color: $text-secondary;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+}
+
+// 秒杀券卡片
+.voucher-card {
+  &.seckill {
+    border: 2px solid $danger-color;
+    position: relative;
+    
+    &::before {
+      content: '秒杀';
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: $danger-color;
+      color: #fff;
+      padding: 4px 12px;
+      font-size: 12px;
+      border-radius: 0 0 0 8px;
+    }
+  }
+  
+  .voucher-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: $text-primary;
+    margin-bottom: 8px;
+  }
+  
+  .voucher-rules {
+    color: $text-secondary;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  
+  .voucher-price {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 12px;
+    
+    .pay-value {
+      color: $danger-color;
+      font-size: 24px;
+      font-weight: bold;
+      
+      &::before {
+        content: '¥';
+        font-size: 16px;
+      }
+    }
+    
+    .actual-value {
+      color: $text-secondary;
+      font-size: 14px;
+      text-decoration: line-through;
+      margin-left: 8px;
+    }
+  }
+  
+  .voucher-stock {
+    color: $text-secondary;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  
+  .voucher-time {
+    color: $warning-color;
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+}
+
+// 按钮样式
+.btn-seckill {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+  border: none;
+  color: #fff;
+  
+  &:hover,
+  &:focus {
+    background: linear-gradient(135deg, #ff5252 0%, #e04848 100%);
+    color: #fff;
+  }
+  
+  &.is-disabled {
+    background: #ccc;
+  }
+}
+
+// 布局工具类
+.flex {
+  display: flex;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// 间距工具类
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.ml-10 { margin-left: 10px; }
+.mr-10 { margin-right: 10px; }
+
+// 文字工具类
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-primary { color: $primary-color; }
+.text-success { color: $success-color; }
+.text-warning { color: $warning-color; }
+.text-danger { color: $danger-color; }
+.text-secondary { color: $text-secondary; }
+
+// 加载动画
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+// 空状态
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  
+  .empty-icon {
+    font-size: 64px;
+    color: $text-placeholder;
+    margin-bottom: 16px;
+  }
+  
+  .empty-text {
+    color: $text-secondary;
+    font-size: 14px;
+  }
+}

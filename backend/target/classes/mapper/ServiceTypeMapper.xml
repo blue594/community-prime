@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community.prime.mapper.ServiceTypeMapper">
+
+    <resultMap id="BaseResultMap" type="com.community.prime.entity.ServiceType">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="category" property="category"/>
+        <result column="image" property="image"/>
+        <result column="description" property="description"/>
+        <result column="base_price" property="basePrice"/>
+        <result column="unit" property="unit"/>
+        <result column="sort" property="sort"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <select id="selectActiveList" resultMap="BaseResultMap">
+        SELECT id, name, category, image, description, base_price, unit, status
+        FROM tb_service_type
+        WHERE status = 1 AND deleted = 0
+        <if test="category != null">
+            AND category = #{category}
+        </if>
+        ORDER BY sort ASC
+    </select>
+
+    <select id="selectAllList" resultMap="BaseResultMap">
+        SELECT id, name, category, image, description, base_price, unit, status, create_time
+        FROM tb_service_type
+        WHERE deleted = 0
+        ORDER BY sort ASC
+    </select>
+
+</mapper>
