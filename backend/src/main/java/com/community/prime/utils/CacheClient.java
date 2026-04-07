@@ -17,6 +17,7 @@ import java.util.function.Function;
 
 import static com.community.prime.utils.RedisConstants.*;
 
+// todo
 /**
  * 【面试重点】Redis缓存工具类 - 缓存三剑客解决方案
  * 
@@ -275,7 +276,7 @@ public class CacheClient {
                 }
             });
         }
-
+        // todo
         // 【面试点】6.4 无论是否获取锁，都立即返回过期数据（保证高可用）
         return r;
     }

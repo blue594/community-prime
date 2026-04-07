@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static com.community.prime.utils.RedisConstants.*;
 
+// todo
 /**
  * 【面试重点】商品服务实现类 - 缓存应用与订单事务管理
  * 
@@ -156,6 +157,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         return Result.ok(voList);
     }
 
+    // todo
     /**
      * 【面试重点】创建订单 - 事务与乐观锁
      * 

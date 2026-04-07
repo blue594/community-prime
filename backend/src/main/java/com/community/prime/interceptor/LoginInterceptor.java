@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import static com.community.prime.utils.RedisConstants.LOGIN_USER_KEY;
 import static com.community.prime.utils.RedisConstants.LOGIN_USER_TTL;
 
+// todo
 /**
  * 【面试重点】登录拦截器 - Token认证与ThreadLocal应用
  * 

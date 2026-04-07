@@ -42,6 +42,7 @@ import org.springframework.data.redis.connection.stream.Consumer;
 import org.springframework.data.redis.connection.stream.StreamOffset;
 import static com.community.prime.utils.RedisConstants.*;
 
+// todo
 /**
  * 优惠券服务实现类 - 【面试重点】秒杀系统核心实现
  * 
@@ -158,6 +159,7 @@ public class VoucherServiceImpl extends ServiceImpl<VoucherMapper, Voucher> impl
         return Result.ok(vo);
     }
 
+    // todo
     /**
      * 【面试重点】秒杀下单核心逻辑
      * 

@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.community.prime.utils.RedisConstants.*;
 
+// todo
 /**
  * 【面试重点】用户服务实现类 - Token认证与Redis应用
  * 
@@ -76,6 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return Result.ok();
     }
 
+    // todo
     /**
      * 【面试重点】登录实现 - 双模式登录（验证码/密码）
      * 

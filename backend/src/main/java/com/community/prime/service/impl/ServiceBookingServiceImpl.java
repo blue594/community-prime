@@ -2,6 +2,7 @@ package com.community.prime.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.community.prime.dto.BookingMessageDTO;
 import com.community.prime.dto.ServiceBookingDTO;
 import com.community.prime.entity.ServiceBooking;
 import com.community.prime.entity.ServiceReview;
@@ -10,6 +11,7 @@ import com.community.prime.handler.BusinessException;
 import com.community.prime.mapper.ServiceBookingMapper;
 import com.community.prime.mapper.ServiceReviewMapper;
 import com.community.prime.mapper.ServiceTypeMapper;
+import com.community.prime.mq.BookingMessageProducer;
 import com.community.prime.service.ServiceBookingService;
 import com.community.prime.utils.UserHolder;
 import com.community.prime.vo.Result;
@@ -21,16 +23,23 @@ import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 服务预约服务实现类
+ *
+ * 【面试重点】RabbitMQ 集成说明：
+ * 1. 核心流程（createBooking）：数据库事务提交后发送 MQ 消息
+ * 2. 解耦原则：预约创建与通知逻辑分离，提升接口响应速度
+ * 3. 可靠性：消息发送失败不影响主流程，记录日志后续补偿
+ * 4. 异步削峰：MQ 缓冲通知请求，保护下游短信/推送服务
  */
 @Slf4j
 @Service
-public class ServiceBookingServiceImpl extends ServiceImpl<ServiceBookingMapper, ServiceBooking> 
+public class ServiceBookingServiceImpl extends ServiceImpl<ServiceBookingMapper, ServiceBooking>
         implements ServiceBookingService {
 
     @Resource
@@ -38,6 +47,13 @@ public class ServiceBookingServiceImpl extends ServiceImpl<ServiceBookingMapper,
 
     @Resource
     private ServiceReviewMapper serviceReviewMapper;
+
+    /**
+     * 注入 RabbitMQ 消息生产者
+     * 用于发送预约创建通知消息
+     */
+    @Resource
+    private BookingMessageProducer bookingMessageProducer;
 
     @Override
     public Result queryServiceTypeList(Integer category) {
@@ -100,8 +116,42 @@ public class ServiceBookingServiceImpl extends ServiceImpl<ServiceBookingMapper,
 
         save(booking);
 
-        log.info("用户{}创建预约成功，预约ID：{}，服务：{}", 
+        log.info("用户{}创建预约成功，预约ID：{}，服务：{}",
                 userId, booking.getId(), serviceType.getName());
+
+        // ==================== RabbitMQ 发送异步通知消息 ====================
+        // 【面试重点】为什么放在事务提交后？
+        // 1. 保证数据库操作成功后才发送消息，避免消息已发但事务回滚
+        // 2. 消息发送与数据库操作不在同一事务，发送失败不影响主流程
+        // 3. 异步解耦：接口立即返回，通知逻辑异步处理，提升响应速度
+        // 4. 削峰填谷：MQ 缓冲请求，保护下游短信/推送服务
+
+        try {
+            // 构造消息 DTO
+            BookingMessageDTO messageDTO = BookingMessageDTO.createBookingMessage(
+                    booking.getId(),
+                    userId,
+                    serviceType.getName(),
+                    booking.getBookingDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                    booking.getStartTime().toString()
+            );
+
+            // 发送消息到 RabbitMQ
+            boolean sendSuccess = bookingMessageProducer.sendBookingCreateMessage(messageDTO);
+
+            if (sendSuccess) {
+                log.info("[createBooking] 预约通知消息发送成功, bookingId: {}", booking.getId());
+            } else {
+                // 发送失败记录日志，不阻塞主流程，后续可通过补偿机制处理
+                log.warn("[createBooking] 预约通知消息发送失败, bookingId: {}, 后续需补偿处理", booking.getId());
+            }
+
+        } catch (Exception e) {
+            // 【面试点】异常处理：记录日志但不抛出，不影响主流程
+            log.error("[createBooking] 发送 MQ 消息异常, bookingId: {}, error: {}",
+                    booking.getId(), e.getMessage(), e);
+        }
+
         return Result.ok(booking.getId());
     }
 

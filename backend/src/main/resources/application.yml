@@ -70,3 +70,48 @@ community:
     order-stream-key: seckill:order:stream
     # 库存预热key前缀
     stock-key-prefix: "seckill:stock:"
+
+---
+# RabbitMQ 配置 - 家政预约异步通知
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    # 连接超时时间
+    connection-timeout: 10000
+    # 消息监听配置
+    listener:
+      simple:
+        # 手动ACK模式 - 消费成功后手动确认，失败可重试
+        acknowledge-mode: manual
+        # 每次预取1条消息，避免消息积压
+        prefetch: 1
+        # 重试机制配置
+        retry:
+          enabled: true
+          # 初始重试间隔（毫秒）
+          initial-interval: 1000
+          # 最大重试次数
+          max-attempts: 3
+          # 最大重试间隔（毫秒）
+          max-interval: 10000
+          # 重试间隔倍数
+          multiplier: 2.0
+        # 拒绝消息后是否重新入队（false则进入死信队列或丢弃）
+        default-requeue-rejected: false
+    # 【扩展】生产者确认机制（如需开启，取消下面注释）
+    # publisher-confirm-type: correlated
+    # publisher-returns: true
+
+# RabbitMQ 自定义配置项
+rabbitmq:
+  booking:
+    # 直连交换机名称
+    exchange: booking.direct.exchange
+    # 路由键
+    routing-key: booking.create.key
+    # 队列名称
+    queue: booking.create.notice.queue
